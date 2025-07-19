@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import ProductCard from '../../components/ProductCard'
-import { mockProducts, mockCategories } from '../../lib/mockData'
+import { getProducts, getProductsByCategory, getCategoryBySlug } from '../../lib/supabaseService'
 
 export default function CategoryPage() {
   const router = useRouter()
@@ -12,24 +12,47 @@ export default function CategoryPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (slug) {
+    async function fetchData() {
+      if (!slug) return
+      
       setLoading(true)
-      
-      // Find category
-      const foundCategory = mockCategories.find(cat => cat.slug === slug)
-      setCategory(foundCategory)
+      try {
+        let productsData = []
+        let categoryData = null
 
-      // Filter products by category
-      if (slug === 'all') {
-        setProducts(mockProducts)
-      } else {
-        const filteredProducts = mockProducts.filter(product => product.category === slug)
-        setProducts(filteredProducts)
+        if (slug === 'all') {
+          productsData = await getProducts()
+          categoryData = { name: 'All Products', slug: 'all' }
+        } else {
+          const [categoryResult, productsResult] = await Promise.all([
+            getCategoryBySlug(slug),
+            getProductsByCategory(slug)
+          ])
+          categoryData = categoryResult
+          productsData = productsResult
+        }
+
+        setCategory(categoryData)
+        setProducts(productsData)
+      } catch (error) {
+        console.error('Error fetching category data:', error)
+      } finally {
+        setLoading(false)
       }
-      
-      setLoading(false)
     }
+
+    fetchData()
   }, [slug])
+
+  const formatProductForCard = (product) => ({
+    id: product.id,
+    name: product.name,
+    price: product.price,
+    image: product.product_images?.find(img => img.is_primary)?.image_url || 
+           product.product_images?.[0]?.image_url || 
+           'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500',
+    category: product.categories?.slug || 'uncategorized'
+  })
 
   if (loading) {
     return (
@@ -44,7 +67,7 @@ export default function CategoryPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-white mb-4">
-            {category ? category.name : 'All Products'}
+            {category ? category.name : 'Category Not Found'}
           </h1>
           <p className="text-gray-400">
             {products.length} {products.length === 1 ? 'product' : 'products'} found
@@ -54,7 +77,7 @@ export default function CategoryPage() {
         {products.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard key={product.id} product={formatProductForCard(product)} />
             ))}
           </div>
         ) : (

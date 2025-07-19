@@ -28,7 +28,7 @@ const Navbar = () => {
           {/* Logo */}
           <Link href="/" className="flex items-center">
             <div className="text-2xl font-bold text-white">
-              TRAP<span className="text-accent-500">HARMONY</span>
+              TRAP &<span className="text-accent-500"> HARMONY</span>
             </div>
           </Link>
 

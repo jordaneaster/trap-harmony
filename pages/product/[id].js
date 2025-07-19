@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Image from 'next/image'
 import Link from 'next/link'
-import { mockProducts } from '../../lib/mockData'
+import { getProductById } from '../../lib/supabaseService'
 
 export default function ProductPage() {
   const router = useRouter()
@@ -15,12 +15,21 @@ export default function ProductPage() {
   const sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL']
 
   useEffect(() => {
-    if (id) {
+    async function fetchProduct() {
+      if (!id) return
+      
       setLoading(true)
-      const foundProduct = mockProducts.find(p => p.id === parseInt(id))
-      setProduct(foundProduct)
-      setLoading(false)
+      try {
+        const productData = await getProductById(parseInt(id))
+        setProduct(productData)
+      } catch (error) {
+        console.error('Error fetching product:', error)
+      } finally {
+        setLoading(false)
+      }
     }
+
+    fetchProduct()
   }, [id])
 
   const handleAddToCart = () => {
@@ -30,6 +39,14 @@ export default function ProductPage() {
     }
     // Add to cart logic here
     console.log('Added to cart:', { product, size: selectedSize, quantity })
+  }
+
+  const getProductImage = () => {
+    if (!product?.product_images || product.product_images.length === 0) {
+      return 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500'
+    }
+    const primaryImage = product.product_images.find(img => img.is_primary)
+    return primaryImage?.image_url || product.product_images[0]?.image_url
   }
 
   if (loading) {
@@ -63,7 +80,7 @@ export default function ProductPage() {
           {/* Product Image */}
           <div className="aspect-square relative">
             <Image
-              src={product.image}
+              src={getProductImage()}
               alt={product.name}
               fill
               className="object-cover rounded-lg"
@@ -77,13 +94,18 @@ export default function ProductPage() {
                 {product.name}
               </h1>
               <p className="text-3xl font-bold text-accent-500">
-                ${product.price}
+                ${product.sale_price || product.price}
               </p>
+              {product.sale_price && (
+                <p className="text-gray-400 text-xl line-through">
+                  ${product.price}
+                </p>
+              )}
             </div>
 
             <div>
               <p className="text-gray-300 text-lg leading-relaxed">
-                {product.description}
+                {product.description || product.short_description}
               </p>
             </div>
 
@@ -134,7 +156,7 @@ export default function ProductPage() {
               onClick={handleAddToCart}
               className="w-full bg-accent-500 text-black py-4 rounded-lg text-lg font-semibold hover:bg-accent-600 transition-colors"
             >
-              Add to Cart - ${(product.price * quantity).toFixed(2)}
+              Add to Cart - ${((product.sale_price || product.price) * quantity).toFixed(2)}
             </button>
 
             {/* Product Details */}
@@ -145,6 +167,7 @@ export default function ProductPage() {
                 <li>• Machine washable</li>
                 <li>• Regular fit</li>
                 <li>• Imported</li>
+                {product.sku && <li>• SKU: {product.sku}</li>}
               </ul>
             </div>
           </div>
