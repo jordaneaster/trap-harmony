@@ -13,26 +13,35 @@ const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const navLinks = [
-    { name: 'New Arrivals', href: '/category/new-arrivals' },
-    { name: 'Hoodies', href: '/category/hoodies' },
-    { name: 'Pants', href: '/category/pants' },
-    { name: 'Jackets', href: '/category/jackets' },
-    { name: 'Accessories', href: '/category/accessories' },
-    { name: 'Sale', href: '/category/sale' },
+    // { name: 'New Arrivals', href: '/category/new-arrivals' },
+    // { name: 'Sale', href: '/category/sale' },
   ]
 
   return (
     <nav className="bg-black/95 backdrop-blur-sm sticky top-0 z-50 border-b border-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link href="/" className="flex items-center">
-            <div className="text-2xl font-bold text-white">
-              TRAP &<span className="text-accent-500"> HARMONY</span>
-            </div>
-          </Link>
+                <Link href="/" className="flex items-center group">
+                <Image
+                  src="https://wwajnvjjyzsdckbjrgdq.supabase.co/storage/v1/object/public/trapnharmony/collection_001/logos/Trap-Harmony-Final-Logo-Landscape.svg"
+                  alt="Trap Harmony Logo"
+                  width={150}
+                  height={60}
+                  priority
+                  className="object-contain h-12 w-auto transition-all duration-300"
+                  style={{
+                    filter: 'invert(1)',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.filter = 'invert(13%) sepia(100%) saturate(7500%) hue-rotate(0deg) brightness(100%) contrast(120%)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.filter = 'invert(1)';
+                  }}
+                />
+              </Link>
 
-          {/* Desktop Navigation */}
+                {/* Desktop Navigation */}
           <div className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-8">
               {navLinks.map((link) => (

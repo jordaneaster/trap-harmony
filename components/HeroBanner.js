@@ -16,15 +16,27 @@ export default function HeroBanner() {
       </div>
       
       <div className="relative z-10 text-center max-w-4xl mx-auto px-4">
-        <h1 className="text-6xl md:text-8xl font-bold text-white mb-6">
+        <div className="mb-6 relative">
+          <div className="bg-gradient-to-br from-stone-600/20 to-red-900/30 backdrop-blur-sm rounded-2xl p-8 border border-stone-500/30 shadow-2xl">
+            <Image
+              src="https://wwajnvjjyzsdckbjrgdq.supabase.co/storage/v1/object/public/trapnharmony/collection_001/logos/Trap&Harmony-Final-Logo-Square.svg"
+              alt="Trap & Harmony Logo"
+              width={400}
+              height={200}
+              className="mx-auto brightness-0 invert"
+              priority
+            />
+          </div>
+        </div>
+        {/* <h1 className="text-6xl md:text-8xl font-bold text-white mb-6">
           TRAP
           &
           <span className="block text-accent-500">HARMONY</span>
-        </h1>
+        </h1> */}
         <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-2xl mx-auto">
           Where street culture meets premium fashion. Express your harmony through style.
         </p>
-        <div className="space-y-4 sm:space-y-0 sm:space-x-4 sm:flex sm:justify-center">
+        {/* <div className="space-y-4 sm:space-y-0 sm:space-x-4 sm:space-x-4 sm:flex sm:justify-center">
           <Link
             href="/category/new-arrivals"
             className="inline-block bg-accent-500 text-black px-8 py-4 rounded-lg text-lg font-semibold hover:bg-accent-600 transition-colors"
@@ -37,7 +49,7 @@ export default function HeroBanner() {
           >
             Sale Items
           </Link>
-        </div>
+        </div> */}
       </div>
     </div>
   )

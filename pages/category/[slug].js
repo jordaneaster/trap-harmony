@@ -22,7 +22,7 @@ export default function CategoryPage() {
 
         if (slug === 'all') {
           productsData = await getProducts()
-          categoryData = { name: 'All Products', slug: 'all' }
+          categoryData = { name: 'Collection_001', slug: 'all' }
         } else {
           const [categoryResult, productsResult] = await Promise.all([
             getCategoryBySlug(slug),
