@@ -1,18 +1,63 @@
+import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 
 export default function ProductCard({ product }) {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  
+  const images = product.product_images || [{ image_url: product.image }]
+  const currentImage = images[currentImageIndex]?.image_url || product.image
+
+  const nextImage = () => {
+    setCurrentImageIndex((prev) => (prev + 1) % images.length)
+  }
+
+  const prevImage = () => {
+    setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length)
+  }
+
   return (
     <Link href={`/product/${product.id}`} className="group">
       <div className="bg-primary-800 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-105">
         <div className="aspect-square relative overflow-hidden">
           <Image
-            src={product.image}
+            src={currentImage}
             alt={product.name}
             fill
             className="object-cover group-hover:scale-110 transition-transform duration-300"
           />
           <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          
+          {/* Image Navigation - only show if multiple images */}
+          {images.length > 1 && (
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <button
+                onClick={(e) => { e.preventDefault(); prevImage(); }}
+                className="absolute left-2 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
+              >
+                ←
+              </button>
+              <button
+                onClick={(e) => { e.preventDefault(); nextImage(); }}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
+              >
+                →
+              </button>
+              
+              {/* Image Dots */}
+              <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1">
+                {images.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={(e) => { e.preventDefault(); setCurrentImageIndex(index); }}
+                    className={`w-2 h-2 rounded-full transition-colors ${
+                      index === currentImageIndex ? 'bg-accent-500' : 'bg-white/50'
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
         <div className="p-4">
           <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-accent-500 transition-colors">

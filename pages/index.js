@@ -50,38 +50,10 @@ export default function Home() {
   return (
     <div>
       <HeroBanner />
-      
-      {/* Categories Section */}
-      <section className="py-16 bg-primary-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-white text-center mb-12">
-            Shop by Category
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {categories.map((category) => (
-              <Link
-                key={category.slug}
-                href={`/category/${category.slug}`}
-                className="group"
-              >
-                <div className="bg-primary-700 rounded-lg p-6 text-center hover:bg-primary-600 transition-colors">
-                  <h3 className="text-lg font-semibold text-white group-hover:text-accent-500">
-                    {category.name}
-                  </h3>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Featured Products */}
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-white mb-4">
-              Featured Products
-            </h2>
             <p className="text-gray-400 max-w-2xl mx-auto">
               Discover our latest drops and most popular streetwear pieces
             </p>

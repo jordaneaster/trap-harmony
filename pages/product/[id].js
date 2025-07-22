@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import Image from 'next/image'
 import Link from 'next/link'
 import { getProductById } from '../../lib/supabaseService'
+import ProductGallery from '../../components/ProductGallery'
 
 export default function ProductPage() {
   const router = useRouter()
@@ -41,12 +41,15 @@ export default function ProductPage() {
     console.log('Added to cart:', { product, size: selectedSize, quantity })
   }
 
-  const getProductImage = () => {
+  const getProductImages = () => {
     if (!product?.product_images || product.product_images.length === 0) {
-      return 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500'
+      return [{ image_url: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500' }]
     }
-    const primaryImage = product.product_images.find(img => img.is_primary)
-    return primaryImage?.image_url || product.product_images[0]?.image_url
+    return product.product_images.sort((a, b) => {
+      if (a.is_primary && !b.is_primary) return -1
+      if (!a.is_primary && b.is_primary) return 1
+      return 0
+    })
   }
 
   if (loading) {
@@ -77,14 +80,9 @@ export default function ProductPage() {
     <div className="py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Product Image */}
-          <div className="aspect-square relative">
-            <Image
-              src={getProductImage()}
-              alt={product.name}
-              fill
-              className="object-cover rounded-lg"
-            />
+          {/* Product Images Gallery */}
+          <div>
+            <ProductGallery images={getProductImages()} productName={product.name} />
           </div>
 
           {/* Product Info */}

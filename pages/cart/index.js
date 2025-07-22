@@ -8,11 +8,24 @@ export default function CartPage() {
       id: 1,
       name: "Oversized Street Hoodie",
       price: 89.99,
-      image: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
+      images: [
+        { image_url: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500" },
+        { image_url: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500&sat=-100" },
+        { image_url: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500&hue=60" }
+      ],
       size: "L",
       quantity: 2
     }
   ])
+
+  const [selectedImages, setSelectedImages] = useState({})
+
+  const selectImage = (itemId, imageIndex) => {
+    setSelectedImages(prev => ({
+      ...prev,
+      [itemId]: imageIndex
+    }))
+  }
 
   const updateQuantity = (id, newQuantity) => {
     if (newQuantity === 0) {
@@ -55,38 +68,72 @@ export default function CartPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Cart Items */}
           <div className="lg:col-span-2 space-y-4">
-            {cartItems.map((item) => (
-              <div key={item.id} className="bg-primary-800 rounded-lg p-4 flex gap-4">
-                <div className="w-20 h-20 relative">
-                  <Image
-                    src={item.image}
-                    alt={item.name}
-                    fill
-                    className="object-cover rounded-lg"
-                  />
+            {cartItems.map((item) => {
+              const currentImageIndex = selectedImages[item.id] || 0
+              const currentImage = item.images?.[currentImageIndex]?.image_url || item.image || "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500"
+              
+              return (
+                <div key={item.id} className="bg-primary-800 rounded-lg p-4">
+                  <div className="flex gap-4">
+                    {/* Main Product Image */}
+                    <div className="w-24 h-24 relative flex-shrink-0">
+                      <Image
+                        src={currentImage}
+                        alt={item.name}
+                        fill
+                        className="object-cover rounded-lg"
+                      />
+                    </div>
+                    
+                    <div className="flex-1">
+                      <h3 className="text-white font-semibold">{item.name}</h3>
+                      <p className="text-gray-400 text-sm">Size: {item.size}</p>
+                      <p className="text-accent-500 font-semibold">${item.price}</p>
+                    </div>
+                    
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                        className="w-8 h-8 border border-gray-600 rounded text-white hover:border-accent-500 transition-colors"
+                      >
+                        -
+                      </button>
+                      <span className="text-white w-8 text-center">{item.quantity}</span>
+                      <button
+                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                        className="w-8 h-8 border border-gray-600 rounded text-white hover:border-accent-500 transition-colors"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+                  
+                  {/* Image Thumbnails */}
+                  {item.images && item.images.length > 1 && (
+                    <div className="flex space-x-2 mt-3 overflow-x-auto">
+                      {item.images.map((image, index) => (
+                        <button
+                          key={index}
+                          onClick={() => selectImage(item.id, index)}
+                          className={`flex-shrink-0 w-12 h-12 relative rounded border-2 transition-colors ${
+                            currentImageIndex === index
+                              ? 'border-accent-500'
+                              : 'border-gray-600 hover:border-gray-400'
+                          }`}
+                        >
+                          <Image
+                            src={image.image_url}
+                            alt={`${item.name} ${index + 1}`}
+                            fill
+                            className="object-cover rounded"
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
-                <div className="flex-1">
-                  <h3 className="text-white font-semibold">{item.name}</h3>
-                  <p className="text-gray-400 text-sm">Size: {item.size}</p>
-                  <p className="text-accent-500 font-semibold">${item.price}</p>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <button
-                    onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                    className="w-8 h-8 border border-gray-600 rounded text-white hover:border-accent-500 transition-colors"
-                  >
-                    -
-                  </button>
-                  <span className="text-white w-8 text-center">{item.quantity}</span>
-                  <button
-                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                    className="w-8 h-8 border border-gray-600 rounded text-white hover:border-accent-500 transition-colors"
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
 
           {/* Order Summary */}
