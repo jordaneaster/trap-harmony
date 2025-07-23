@@ -2,7 +2,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 
-export default function ProductCard({ product }) {
+export default function ProductCard({ product, className = '' }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   
   const images = product.product_images || [{ image_url: product.image }]
@@ -16,15 +16,36 @@ export default function ProductCard({ product }) {
     setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length)
   }
 
+  // Extract color from product ID if available
+  const productColor = product.id?.includes('black') ? 'black' : 
+                      product.id?.includes('white') ? 'white' :
+                      product.id?.includes('red') ? 'red' :
+                      product.id?.includes('yellow') ? 'yellow' : 'black'
+
+  // Determine product link based on available data
+  const getProductLink = () => {
+    if (product.slug) {
+      // If product has variants, include the color parameter
+      const firstVariant = product.product_variants?.[0] || product.variants?.[0]
+      if (firstVariant?.color) {
+        return `/product/${product.slug}?color=${firstVariant.color}`
+      }
+      return `/product/${product.slug}`
+    }
+    // Fallback for hardcoded data
+    return `/product/gods-dont-sleep-tee?color=${productColor}`
+  }
+
   return (
-    <Link href={`/product/${product.id}`} className="group">
-      <div className="bg-primary-800 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-105">
+    <Link href={getProductLink()} className="group">
+      <div className={`bg-primary-800 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-105 ${className}`}>
         <div className="aspect-square relative overflow-hidden">
           <Image
             src={currentImage}
             alt={product.name}
             fill
             className="object-cover group-hover:scale-110 transition-transform duration-300"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
           <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           
@@ -33,13 +54,13 @@ export default function ProductCard({ product }) {
             <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               <button
                 onClick={(e) => { e.preventDefault(); prevImage(); }}
-                className="absolute left-2 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
+                className="absolute left-2 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-black/70 text-white rounded-full hover:bg-black/90 transition-colors flex items-center justify-center"
               >
                 ←
               </button>
               <button
                 onClick={(e) => { e.preventDefault(); nextImage(); }}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-black/70 text-white rounded-full hover:bg-black/90 transition-colors flex items-center justify-center"
               >
                 →
               </button>
@@ -51,7 +72,7 @@ export default function ProductCard({ product }) {
                     key={index}
                     onClick={(e) => { e.preventDefault(); setCurrentImageIndex(index); }}
                     className={`w-2 h-2 rounded-full transition-colors ${
-                      index === currentImageIndex ? 'bg-accent-500' : 'bg-white/50'
+                      index === currentImageIndex ? 'bg-white' : 'bg-white/50'
                     }`}
                   />
                 ))}

@@ -21,7 +21,7 @@ const Navbar = () => {
     <nav className="bg-black/95 backdrop-blur-sm sticky top-0 z-50 border-b border-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-                <Link href="/" className="flex items-center group">
+                <Link href="/home" className="flex items-center group">
                 <Image
                   src="https://wwajnvjjyzsdckbjrgdq.supabase.co/storage/v1/object/public/trapnharmony/collection_001/logos/Trap-Harmony-Final-Logo-Landscape.svg"
                   alt="Trap Harmony Logo"
@@ -113,8 +113,17 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1 md:col-span-2">
-            <div className="text-2xl font-bold text-white mb-4">
-              TRAP<span className="text-accent-500">HARMONY</span>
+            <div className="mb-4">
+              <Image
+                src="https://wwajnvjjyzsdckbjrgdq.supabase.co/storage/v1/object/public/trapnharmony/collection_001/logos/Trap-Harmony-Final-Logo-Landscape.svg"
+                alt="Trap Harmony Logo"
+                width={180}
+                height={72}
+                className="object-contain h-12 w-auto"
+                style={{
+                  filter: 'invert(1)',
+                }}
+              />
             </div>
             <p className="text-gray-400 max-w-md">
               Premium streetwear for the culture. Express your harmony through fashion.
@@ -146,7 +155,11 @@ const Footer = () => {
   )
 }
 
-export default function Layout({ children }) {
+export default function Layout({ children, showLayout = true }) {
+  if (!showLayout) {
+    return <>{children}</>
+  }
+
   return (
     <div className="min-h-screen bg-primary-900 text-white">
       <Navbar />

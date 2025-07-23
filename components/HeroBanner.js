@@ -17,7 +17,7 @@ export default function HeroBanner() {
       
       <div className="relative z-10 text-center max-w-4xl mx-auto px-4">
         <div className="mb-6 relative">
-          <div className="bg-gradient-to-br from-stone-600/20 to-red-900/30 backdrop-blur-sm rounded-2xl p-8 border border-stone-500/30 shadow-2xl">
+          <div className="">
             <Image
               src="https://wwajnvjjyzsdckbjrgdq.supabase.co/storage/v1/object/public/trapnharmony/collection_001/logos/Trap&Harmony-Final-Logo-Square.svg"
               alt="Trap & Harmony Logo"

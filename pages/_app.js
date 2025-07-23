@@ -9,6 +9,7 @@ import '../styles/globals.css'
 
 export default function App({ Component, pageProps }) {
   const router = useRouter();
+  const isLandingPage = router.pathname === '/';
 
   useEffect(() => {
     // Initialize analytics on app load
@@ -40,7 +41,7 @@ export default function App({ Component, pageProps }) {
   }, [router]);
 
   return (
-    <Layout>
+    <Layout showLayout={!isLandingPage}>
       <Component {...pageProps} />
       <ConsentBanner />
     </Layout>
