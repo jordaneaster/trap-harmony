@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { useRouter } from 'next/router'
-import { motion } from 'framer-motion'
+import { motion, PanInfo } from 'framer-motion'
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 import { getCollection, getCollectionProducts } from '../../lib/collectionService'
 import GodsCollectionHero from '../../components/heroes/GodsCollectionHero'
+
 export default function GodsCollectionPage() {
   const router = useRouter()
   const [collection, setCollection] = useState(null)
@@ -74,6 +75,15 @@ export default function GodsCollectionPage() {
     })
   }
 
+  const handleVariantSwipe = (event, info) => {
+    const threshold = 50
+    if (info.offset.x > threshold) {
+      prevColor()
+    } else if (info.offset.x < -threshold) {
+      nextColor()
+    }
+  }
+
   if (loading) {
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-black">
@@ -104,9 +114,13 @@ export default function GodsCollectionPage() {
 
 
           {/* 3D Color Casket Viewer */}
-          <div 
+          <motion.div 
             className="relative h-64 md:h-96 flex items-center justify-center"
             style={{ perspective: '2000px' }}
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.1}
+            onDragEnd={handleVariantSwipe}
           >
             {/* Mystical Background Effects */}
             <div className="absolute inset-0 bg-gradient-radial from-gray-800/20 via-transparent to-transparent rounded-full" />
@@ -246,7 +260,7 @@ export default function GodsCollectionPage() {
                             animate={{ opacity: 1 }}
                             transition={{ delay: 0.5 }}
                           >
-                            {/* Click to purchase • $49.99 */}
+                            Swipe to browse colors
                           </motion.p>
                         )}
                       </div>
@@ -301,7 +315,7 @@ export default function GodsCollectionPage() {
             >
               <ChevronRightIcon className="w-5 h-5 md:w-6 md:h-6" />
             </motion.button>
-          </div>
+          </motion.div>
 
           {/* Color Dots Indicator */}
           <motion.div
@@ -338,6 +352,18 @@ export default function GodsCollectionPage() {
                 </div>
               </motion.button>
             ))}
+          </motion.div>
+
+          {/* Swipe Instructions for Mobile */}
+          <motion.div
+            className="md:hidden text-center mt-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.5 }}
+          >
+            <p className="text-gray-400 text-sm font-mono">
+              Swipe left or right to browse variants
+            </p>
           </motion.div>
         </div>
       </section>

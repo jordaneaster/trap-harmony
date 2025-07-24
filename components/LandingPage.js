@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, PanInfo } from 'framer-motion'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
@@ -23,7 +23,7 @@ export default function LandingPage() {
     return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
-useEffect(() => {
+  useEffect(() => {
     setCollections([
         {
             id: 'collection_001',
@@ -74,6 +74,14 @@ useEffect(() => {
     setCurrentIndex((prev) => (prev - 1 + collections.length) % collections.length)
   }
 
+  const handleSwipe = (event, info) => {
+    const threshold = 50
+    if (info.offset.x > threshold) {
+      prevCollection()
+    } else if (info.offset.x < -threshold) {
+      nextCollection()
+    }
+  }
 
   if (isMobile) {
     return (
@@ -94,6 +102,10 @@ useEffect(() => {
                 exit={{ opacity: 0, x: -100 }}
                 transition={{ duration: 0.4 }}
                 className="absolute inset-0"
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0.2}
+                onDragEnd={handleSwipe}
               >
                 <motion.button
                   className={`w-full h-full bg-gradient-to-br ${collections[currentIndex]?.color} rounded-lg shadow-2xl border border-gray-500/50 p-4 flex flex-col items-center justify-center cursor-pointer`}
@@ -122,7 +134,7 @@ useEffect(() => {
                   </p>
                   <div className="text-gray-300 text-xs mt-2 font-mono flex flex-col items-center">
                     <div className="text-lg mb-1">↑</div>
-                    <span>Tap to explore</span>
+                    <span>Tap to explore • Swipe to browse</span>
                   </div>
                 </motion.button>
               </motion.div>
