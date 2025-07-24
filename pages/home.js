@@ -30,19 +30,23 @@ export default function HomePage() {
   }, [])
 
   const formatProductForCard = (product) => ({
-    id: product.id,
-    name: product.name,
-    price: product.price,
+    id: String(product.id), // Ensure ID is always a string
+    name: product.name || 'Untitled Product',
+    price: product.price || 0,
     image: product.product_images?.find(img => img.is_primary)?.image_url || 
            product.product_images?.[0]?.image_url || 
            'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500',
-    category: product.categories?.slug || 'uncategorized'
+    category: product.categories?.slug || 'uncategorized',
+    slug: product.slug || `product-${product.id}`
   })
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-white text-xl">Loading...</div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-black">
+        <div className="text-center">
+          <div className="text-yellow-400 text-xl font-mono mb-4">Loading...</div>
+          <div className="text-gray-400 text-sm">Please wait while we load the store</div>
+        </div>
       </div>
     )
   }
@@ -60,9 +64,15 @@ export default function HomePage() {
           </div>
           {featuredProducts.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {featuredProducts.map((product) => (
-                <ProductCard key={product.id} product={formatProductForCard(product)} />
-              ))}
+              {featuredProducts.map((product) => {
+                const formattedProduct = formatProductForCard(product)
+                return (
+                  <ProductCard 
+                    key={formattedProduct.id} 
+                    product={formattedProduct} 
+                  />
+                )
+              })}
             </div>
           ) : (
             <div className="text-center text-gray-400">

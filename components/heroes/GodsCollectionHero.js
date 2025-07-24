@@ -7,14 +7,18 @@ export default function GodsCollectionHero({ heroConfig }) {
 
   useEffect(() => {
     const handleMouseMove = (e) => {
-      setMousePosition({
-        x: (e.clientX / window.innerWidth) * 100,
-        y: (e.clientY / window.innerHeight) * 100
-      })
+      if (typeof window !== 'undefined') {
+        setMousePosition({
+          x: (e.clientX / window.innerWidth) * 100,
+          y: (e.clientY / window.innerHeight) * 100
+        })
+      }
     }
 
-    window.addEventListener('mousemove', handleMouseMove)
-    return () => window.removeEventListener('mousemove', handleMouseMove)
+    if (typeof window !== 'undefined') {
+      window.addEventListener('mousemove', handleMouseMove)
+      return () => window.removeEventListener('mousemove', handleMouseMove)
+    }
   }, [])
 
   return (
@@ -95,7 +99,7 @@ export default function GodsCollectionHero({ heroConfig }) {
             transition={{ duration: 1, delay: 0.2 }}
             className="mb-6"
           >
-            <h1 className="text-6xl md:text-8xl font-mono font-bold text-white mb-4 tracking-wider">
+            <h1 className="text-4xl md:text-6xl lg:text-8xl font-mono font-bold text-white mb-4 tracking-wider">
               {heroConfig?.title || 'GODS DON\'T SLEEP'}
             </h1>
             
@@ -112,7 +116,7 @@ export default function GodsCollectionHero({ heroConfig }) {
                 ease: "easeInOut"
               }}
             >
-              <svg width="120" height="80" viewBox="0 0 120 80" className="text-white">
+              <svg width="80" height="60" viewBox="0 0 120 80" className="text-white md:w-[120px] md:h-[80px]">
                 <ellipse cx="60" cy="40" rx="55" ry="35" fill="none" stroke="currentColor" strokeWidth="2"/>
                 <circle cx="60" cy="40" r="20" fill="none" stroke="currentColor" strokeWidth="2"/>
                 <circle cx="60" cy="40" r="10" fill="currentColor" fillOpacity="0.8"/>
@@ -126,7 +130,7 @@ export default function GodsCollectionHero({ heroConfig }) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-xl md:text-2xl text-gray-300 mb-8 font-mono tracking-wide"
+            className="text-lg md:text-xl lg:text-2xl text-gray-300 mb-8 font-mono tracking-wide"
           >
             {heroConfig?.subtitle || ''}
           </motion.p>
@@ -136,7 +140,7 @@ export default function GodsCollectionHero({ heroConfig }) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="text-gray-400 max-w-2xl mx-auto mb-12 text-lg"
+            className="text-gray-400 max-w-2xl mx-auto mb-12 text-base md:text-lg px-4"
           >
             {heroConfig?.description || 'Experience the mystical power of the all-seeing eye.'}
           </motion.p>
@@ -146,7 +150,7 @@ export default function GodsCollectionHero({ heroConfig }) {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.8 }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto mb-12"
+            className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 max-w-4xl mx-auto mb-12 px-4"
           >
             {(heroConfig?.features || []).map((feature, index) => (
               <div key={index} className="text-center">

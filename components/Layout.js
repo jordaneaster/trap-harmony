@@ -21,7 +21,7 @@ const Navbar = () => {
     <nav className="bg-black/95 backdrop-blur-sm sticky top-0 z-50 border-b border-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-                <Link href="/home" className="flex items-center group">
+                <Link href="/collection/gods" className="flex items-center group">
                 <Image
                   src="https://wwajnvjjyzsdckbjrgdq.supabase.co/storage/v1/object/public/trapnharmony/collection_001/logos/Trap-Harmony-Final-Logo-Landscape.svg"
                   alt="Trap Harmony Logo"

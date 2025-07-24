@@ -77,13 +77,16 @@ export default function GodsCollectionPage() {
   if (loading) {
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-black">
-          <div className="text-yellow-400 text-xl font-mono">Loading Gods Collection...</div>
+          <div className="text-center">
+            <div className="text-yellow-400 text-xl font-mono mb-4">Loading Gods Collection...</div>
+            <div className="text-gray-400 text-sm">Please wait while we load the sacred variants</div>
+          </div>
         </div>
     )
   }
 
   return (
-    <div className="bg-gradient-to-br from-black via-gray-900 to-black">
+    <div className="bg-gradient-to-br from-black via-gray-900 to-black min-h-screen">
       {/* Hero Section */}
       {/* <GodsCollectionHero 
         heroConfig={collection?.hero_config} 
@@ -93,36 +96,16 @@ export default function GodsCollectionPage() {
       {/* Mystical Color Casket Section */}
       <section 
         ref={sacredVariantsRef}
-        className="py-32 bg-black/90 relative overflow-hidden"
+        className="py-16 md:py-32 bg-black/90 relative overflow-hidden"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           {/* Section Title */}
-          {/* <motion.div
-            className="text-center mb-20"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-5xl font-mono font-bold text-white mb-6" 
-                style={{
-                  textShadow: '0 0 20px rgba(255, 255, 255, 0.3)',
-                  background: 'linear-gradient(135deg, #ffffff 0%, #9ca3af 50%, #ffffff 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text'
-                }}>
-              SACRED VARIANTS
-            </h2>
-            <p className="text-gray-400 max-w-2xl mx-auto text-lg font-mono">
-              Four divine colors, each channeling different spiritual energies - Click to purchase
-            </p>
-          </motion.div> */}
+
 
           {/* 3D Color Casket Viewer */}
           <div 
-            className="relative h-96 flex items-center justify-center"
+            className="relative h-64 md:h-96 flex items-center justify-center"
             style={{ perspective: '2000px' }}
           >
             {/* Mystical Background Effects */}
@@ -139,13 +122,14 @@ export default function GodsCollectionPage() {
               const absPosition = Math.abs(position)
               const isCenter = position === 0
               
-              // Calculate 3D positioning
-              const finalX = position * 200
+              // Calculate 3D positioning with mobile adjustments
+              const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
+              const finalX = position * (isMobile ? 120 : 200)
               const finalZ = isCenter ? 200 : 80 - (absPosition * 20)
               const finalY = isCenter ? 0 : absPosition * 10
               const finalRotateY = isCenter ? 0 : position * 15
               const finalRotateX = isCenter ? 0 : 5
-              const finalScale = isCenter ? 1.3 : 1 - (absPosition * 0.15)
+              const finalScale = isCenter ? (isMobile ? 1.1 : 1.3) : 1 - (absPosition * 0.15)
               const finalOpacity = absPosition <= 2 ? 1 - (absPosition * 0.2) : 0
 
               return (
@@ -179,11 +163,11 @@ export default function GodsCollectionPage() {
                     damping: 15
                   }}
                   onClick={() => handleVariantClick(variation)}
-                  whileHover={{ scale: isCenter ? 1.35 : finalScale * 1.05 }}
+                  whileHover={{ scale: isCenter ? (isMobile ? 1.15 : 1.35) : finalScale * 1.05 }}
                 >
                   {/* T-shirt Card */}
                   <div 
-                    className="w-64 h-80 relative rounded-2xl overflow-hidden shadow-2xl group-hover:shadow-3xl transition-all duration-300"
+                    className="w-48 h-60 md:w-64 md:h-80 relative rounded-2xl overflow-hidden shadow-2xl group-hover:shadow-3xl transition-all duration-300"
                     style={{
                       border: isCenter ? 
                         `3px solid ${variation.glow?.replace('0.8', '0.9') || 'rgba(255,255,255,0.9)'}` : 
@@ -296,32 +280,32 @@ export default function GodsCollectionPage() {
             {/* Navigation Controls */}
             <motion.button
               onClick={prevColor}
-              className="absolute left-20 top-1/2 transform -translate-y-1/2 z-50 p-4 bg-black/80 backdrop-blur-sm rounded-full text-white border border-gray-600/50 hover:bg-black/90 hover:border-white/50 transition-all duration-300"
+              className="absolute left-4 md:left-20 top-1/2 transform -translate-y-1/2 z-50 p-3 md:p-4 bg-black/80 backdrop-blur-sm rounded-full text-white border border-gray-600/50 hover:bg-black/90 hover:border-white/50 transition-all duration-300"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 1 }}
             >
-              <ChevronLeftIcon className="w-6 h-6" />
+              <ChevronLeftIcon className="w-5 h-5 md:w-6 md:h-6" />
             </motion.button>
 
             <motion.button
               onClick={nextColor}
-              className="absolute right-20 top-1/2 transform -translate-y-1/2 z-50 p-4 bg-black/80 backdrop-blur-sm rounded-full text-white border border-gray-600/50 hover:bg-black/90 hover:border-white/50 transition-all duration-300"
+              className="absolute right-4 md:right-20 top-1/2 transform -translate-y-1/2 z-50 p-3 md:p-4 bg-black/80 backdrop-blur-sm rounded-full text-white border border-gray-600/50 hover:bg-black/90 hover:border-white/50 transition-all duration-300"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 1 }}
             >
-              <ChevronRightIcon className="w-6 h-6" />
+              <ChevronRightIcon className="w-5 h-5 md:w-6 md:h-6" />
             </motion.button>
           </div>
 
           {/* Color Dots Indicator */}
           <motion.div
-            className="flex justify-center space-x-4 mt-12"
+            className="flex justify-center space-x-3 md:space-x-4 mt-8 md:mt-12"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.2 }}
