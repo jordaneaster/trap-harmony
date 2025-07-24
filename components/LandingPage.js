@@ -75,7 +75,7 @@ export default function LandingPage() {
   }
 
   const handleSwipe = (event, info) => {
-    const threshold = 50
+    const threshold = 30 // Reduced from 50 to make it more sensitive
     if (info.offset.x > threshold) {
       prevCollection()
     } else if (info.offset.x < -threshold) {
@@ -100,11 +100,12 @@ export default function LandingPage() {
                 initial={{ opacity: 0, x: 100 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -100 }}
-                transition={{ duration: 0.4 }}
+                transition={{ duration: 0.2 }} // Reduced from 0.4 for faster transitions
                 className="absolute inset-0"
                 drag="x"
                 dragConstraints={{ left: 0, right: 0 }}
-                dragElastic={0.2}
+                dragElastic={0.05} // Reduced from 0.2 for snappier feel
+                dragTransition={{ bounceStiffness: 600, bounceDamping: 20 }}
                 onDragEnd={handleSwipe}
               >
                 <motion.button

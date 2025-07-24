@@ -76,7 +76,7 @@ export default function GodsCollectionPage() {
   }
 
   const handleVariantSwipe = (event, info) => {
-    const threshold = 50
+    const threshold = 30 // Reduced from 50 to make it more sensitive
     if (info.offset.x > threshold) {
       prevColor()
     } else if (info.offset.x < -threshold) {
@@ -119,7 +119,8 @@ export default function GodsCollectionPage() {
             style={{ perspective: '2000px' }}
             drag="x"
             dragConstraints={{ left: 0, right: 0 }}
-            dragElastic={0.1}
+            dragElastic={0.05} // Reduced from 0.1 for snappier feel
+            dragTransition={{ bounceStiffness: 600, bounceDamping: 20 }}
             onDragEnd={handleVariantSwipe}
           >
             {/* Mystical Background Effects */}
@@ -170,11 +171,11 @@ export default function GodsCollectionPage() {
                     scale: finalScale
                   }}
                   transition={{ 
-                    duration: 0.8,
-                    delay: index * 0.1,
+                    duration: 0.4, // Reduced from 0.8 for faster transitions
+                    delay: index * 0.05,
                     type: "spring",
-                    stiffness: 120,
-                    damping: 15
+                    stiffness: 200, // Increased from 120 for snappier movement
+                    damping: 25 // Increased from 15 for less bounce
                   }}
                   onClick={() => handleVariantClick(variation)}
                   whileHover={{ scale: isCenter ? (isMobile ? 1.15 : 1.35) : finalScale * 1.05 }}
