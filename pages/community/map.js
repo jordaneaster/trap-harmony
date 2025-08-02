@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import Head from 'next/head'
+import Layout from '../../components/Layout'
 import dynamic from 'next/dynamic'
 
 // Dynamically import to avoid SSR issues
@@ -10,6 +11,64 @@ const CommunityMapComponent = dynamic(() => Promise.resolve(CommunityMapInner), 
 function CommunityMapInner() {
   const mapRef = useRef(null)
   const isInitialized = useRef(false)
+  const mapStateRef = useRef({
+    map: null,
+    markerClusterGroup: null,
+    allMarkers: [],
+    isClusterMode: true,
+    isAddingPin: false,
+    tempMarker: null,
+    communityPins: [
+      {
+        id: 1,
+        type: 'trap',
+        lat: 33.7490,
+        lng: -84.3880,
+        message: "I trap in Atlanta, building my music career one beat at a time. 🎵",
+        timestamp: "2024-01-15"
+      },
+      {
+        id: 2,
+        type: 'harmony',
+        lat: 25.7617,
+        lng: -80.1918,
+        message: "Miami beach is where I find my harmony. The waves wash away all stress. 🌊",
+        timestamp: "2024-01-14"
+      },
+      {
+        id: 3,
+        type: 'trap',
+        lat: 40.7128,
+        lng: -74.0060,
+        message: "NYC hustle never stops. Every corner has a story, every street a dream. 🏙️",
+        timestamp: "2024-01-13"
+      },
+      {
+        id: 4,
+        type: 'harmony',
+        lat: 36.1699,
+        lng: -115.1398,
+        message: "Found peace in the desert sunrise outside Vegas. Sometimes you gotta get away. 🌅",
+        timestamp: "2024-01-12"
+      },
+      {
+        id: 5,
+        type: 'trap',
+        lat: 34.0522,
+        lng: -118.2437,
+        message: "LA grind is real. Chasing dreams in the city of angels. ✨",
+        timestamp: "2024-01-11"
+      },
+      {
+        id: 6,
+        type: 'harmony',
+        lat: 47.6062,
+        lng: -122.3321,
+        message: "Seattle coffee shops are my sanctuary. Rain and creativity go hand in hand. ☕",
+        timestamp: "2024-01-10"
+      }
+    ]
+  })
 
   useEffect(() => {
     // Prevent multiple initializations
@@ -69,75 +128,18 @@ function CommunityMapInner() {
       mapRef.current.remove()
     }
 
-    // Sample community data
-    const communityPins = [
-      {
-        id: 1,
-        type: 'trap',
-        lat: 33.7490,
-        lng: -84.3880,
-        message: "I trap in Atlanta, building my music career one beat at a time. 🎵",
-        timestamp: "2024-01-15"
-      },
-      {
-        id: 2,
-        type: 'harmony',
-        lat: 25.7617,
-        lng: -80.1918,
-        message: "Miami beach is where I find my harmony. The waves wash away all stress. 🌊",
-        timestamp: "2024-01-14"
-      },
-      {
-        id: 3,
-        type: 'trap',
-        lat: 40.7128,
-        lng: -74.0060,
-        message: "NYC hustle never stops. Every corner has a story, every street a dream. 🏙️",
-        timestamp: "2024-01-13"
-      },
-      {
-        id: 4,
-        type: 'harmony',
-        lat: 36.1699,
-        lng: -115.1398,
-        message: "Found peace in the desert sunrise outside Vegas. Sometimes you gotta get away. 🌅",
-        timestamp: "2024-01-12"
-      },
-      {
-        id: 5,
-        type: 'trap',
-        lat: 34.0522,
-        lng: -118.2437,
-        message: "LA grind is real. Chasing dreams in the city of angels. ✨",
-        timestamp: "2024-01-11"
-      },
-      {
-        id: 6,
-        type: 'harmony',
-        lat: 47.6062,
-        lng: -122.3321,
-        message: "Seattle coffee shops are my sanctuary. Rain and creativity go hand in hand. ☕",
-        timestamp: "2024-01-10"
-      }
-    ];
-
-    let map;
-    let markerClusterGroup;
-    let allMarkers = [];
-    let isClusterMode = true;
-    let isAddingPin = false;
-    let tempMarker = null;
+    const mapState = mapStateRef.current
 
     // Initialize map
     try {
-      map = L.map('community-map', {
+      mapState.map = L.map('community-map', {
         center: [39.8283, -98.5795], // Center of USA
         zoom: 4,
         zoomControl: false,
         attributionControl: false
       });
       
-      mapRef.current = map
+      mapRef.current = mapState.map
     } catch (error) {
       console.error('Error initializing map:', error)
       return
@@ -146,17 +148,17 @@ function CommunityMapInner() {
     // Add custom zoom control
     L.control.zoom({
       position: 'bottomright'
-    }).addTo(map);
+    }).addTo(mapState.map);
 
     // Dark map tiles
     L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
       attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>',
       maxZoom: 20
-    }).addTo(map);
+    }).addTo(mapState.map);
 
     // Initialize marker cluster group
     try {
-      markerClusterGroup = L.markerClusterGroup({
+      mapState.markerClusterGroup = L.markerClusterGroup({
         disableClusteringAtZoom: 10,
         maxClusterRadius: 50,
         iconCreateFunction: function(cluster) {
@@ -171,7 +173,7 @@ function CommunityMapInner() {
     } catch (error) {
       console.error('Error creating marker cluster group:', error)
       // Fallback without clustering
-      markerClusterGroup = L.layerGroup()
+      mapState.markerClusterGroup = L.layerGroup()
     }
 
     function createCustomIcon(type) {
@@ -189,9 +191,9 @@ function CommunityMapInner() {
     }
 
     function loadCommunityPins() {
-      allMarkers = [];
+      mapState.allMarkers = [];
       
-      communityPins.forEach(pin => {
+      mapState.communityPins.forEach(pin => {
         const marker = L.marker([pin.lat, pin.lng], {
           icon: createCustomIcon(pin.type)
         });
@@ -202,11 +204,11 @@ function CommunityMapInner() {
           className: 'custom-popup'
         });
 
-        allMarkers.push(marker);
-        markerClusterGroup.addLayer(marker);
+        mapState.allMarkers.push(marker);
+        mapState.markerClusterGroup.addLayer(marker);
       });
 
-      map.addLayer(markerClusterGroup);
+      mapState.map.addLayer(mapState.markerClusterGroup);
     }
 
     function createPopupContent(pin) {
@@ -228,76 +230,31 @@ function CommunityMapInner() {
       `;
     }
 
-    function setupEventListeners() {
-      // Add delay to ensure DOM elements are ready
-      setTimeout(() => {
-        // Add pin button
-        const addPinBtn = document.getElementById('add-pin-btn');
-        if (addPinBtn) {
-          addPinBtn.addEventListener('click', () => {
-            if (!isAddingPin) {
-              startAddingPin();
-            }
-          });
-        }
-
-        // Toggle clusters
-        const toggleBtn = document.getElementById('toggle-view-btn');
-        if (toggleBtn) {
-          toggleBtn.addEventListener('click', toggleClusters);
-        }
-
-        // Modal events
-        const cancelBtn = document.getElementById('cancel-pin-btn');
-        if (cancelBtn) {
-          cancelBtn.addEventListener('click', cancelAddingPin);
-        }
-
-        const form = document.getElementById('add-pin-form');
-        if (form) {
-          form.addEventListener('submit', handlePinSubmit);
-        }
-
-        // Close modal on outside click
-        const modal = document.getElementById('add-pin-modal');
-        if (modal) {
-          modal.addEventListener('click', (e) => {
-            if (e.target.id === 'add-pin-modal') {
-              cancelAddingPin();
-            }
-          });
-        }
-      }, 100)
-
-      // Map click for adding pins
-      map.on('click', handleMapClick);
-    }
-
     function startAddingPin() {
-      isAddingPin = true;
+      mapState.isAddingPin = true;
       const btn = document.getElementById('add-pin-btn');
       if (btn) {
         btn.textContent = 'Click on map to place pin';
         btn.classList.add('bg-yellow-600', 'hover:bg-yellow-700');
         btn.classList.remove('bg-red-600', 'hover:bg-red-700');
       }
-      map.getContainer().style.cursor = 'crosshair';
+      mapState.map.getContainer().style.cursor = 'crosshair';
     }
 
     function handleMapClick(e) {
-      if (!isAddingPin) return;
+      if (!mapState.isAddingPin) return;
 
       const { lat, lng } = e.latlng;
       
       // Remove existing temp marker
-      if (tempMarker) {
-        map.removeLayer(tempMarker);
+      if (mapState.tempMarker) {
+        mapState.map.removeLayer(mapState.tempMarker);
       }
 
       // Add temporary marker
-      tempMarker = L.marker([lat, lng], {
+      mapState.tempMarker = L.marker([lat, lng], {
         icon: createCustomIcon('trap')
-      }).addTo(map);
+      }).addTo(mapState.map);
 
       // Store coordinates for form submission
       window.pendingPinCoords = { lat, lng };
@@ -325,7 +282,7 @@ function CommunityMapInner() {
 
       // Create new pin data
       const newPin = {
-        id: communityPins.length + 1,
+        id: mapState.communityPins.length + 1,
         type: type,
         lat: window.pendingPinCoords.lat,
         lng: window.pendingPinCoords.lng,
@@ -334,43 +291,43 @@ function CommunityMapInner() {
       };
 
       // Add to community pins
-      communityPins.push(newPin);
+      mapState.communityPins.push(newPin);
 
       // Update temp marker with correct icon
-      if (tempMarker) {
-        map.removeLayer(tempMarker);
-        tempMarker = L.marker([newPin.lat, newPin.lng], {
+      if (mapState.tempMarker) {
+        mapState.map.removeLayer(mapState.tempMarker);
+        mapState.tempMarker = L.marker([newPin.lat, newPin.lng], {
           icon: createCustomIcon(newPin.type)
         });
         
         const popupContent = createPopupContent(newPin);
-        tempMarker.bindPopup(popupContent, {
+        mapState.tempMarker.bindPopup(popupContent, {
           maxWidth: 300,
           className: 'custom-popup'
         });
 
-        allMarkers.push(tempMarker);
-        markerClusterGroup.addLayer(tempMarker);
+        mapState.allMarkers.push(mapState.tempMarker);
+        mapState.markerClusterGroup.addLayer(mapState.tempMarker);
       }
 
       // Reset form and close modal
       cancelAddingPin();
       
       // Show success message
-      if (tempMarker) {
-        tempMarker.openPopup();
+      if (mapState.tempMarker) {
+        mapState.tempMarker.openPopup();
       }
     }
 
     function cancelAddingPin() {
-      isAddingPin = false;
+      mapState.isAddingPin = false;
       const btn = document.getElementById('add-pin-btn');
       if (btn) {
         btn.textContent = '+ Add Your Pin';
         btn.classList.remove('bg-yellow-600', 'hover:bg-yellow-700');
         btn.classList.add('bg-red-600', 'hover:bg-red-700');
       }
-      map.getContainer().style.cursor = '';
+      mapState.map.getContainer().style.cursor = '';
       
       // Hide modal
       const modal = document.getElementById('add-pin-modal');
@@ -386,32 +343,97 @@ function CommunityMapInner() {
       }
       
       // Remove temp marker if exists
-      if (tempMarker && !communityPins.find(pin => 
-        pin.lat === tempMarker.getLatLng().lat && pin.lng === tempMarker.getLatLng().lng
+      if (mapState.tempMarker && !mapState.communityPins.find(pin => 
+        pin.lat === mapState.tempMarker.getLatLng().lat && pin.lng === mapState.tempMarker.getLatLng().lng
       )) {
-        map.removeLayer(tempMarker);
-        tempMarker = null;
+        mapState.map.removeLayer(mapState.tempMarker);
+        mapState.tempMarker = null;
       }
       
       window.pendingPinCoords = null;
     }
 
     function toggleClusters() {
+      console.log('Toggle clusters clicked', mapState.isClusterMode); // Debug log
       const btn = document.getElementById('toggle-view-btn');
       
-      if (isClusterMode) {
+      if (mapState.isClusterMode) {
+        console.log('Disabling clusters'); // Debug log
         // Remove clusters, show individual markers
-        map.removeLayer(markerClusterGroup);
-        allMarkers.forEach(marker => map.addLayer(marker));
-        if (btn) btn.textContent = 'Enable Clusters';
-        isClusterMode = false;
-      } else {
-        // Remove individual markers, show clusters
-        allMarkers.forEach(marker => map.removeLayer(marker));
-        map.addLayer(markerClusterGroup);
+        mapState.map.removeLayer(mapState.markerClusterGroup);
+        mapState.allMarkers.forEach(marker => {
+          mapState.map.addLayer(marker);
+        });
         if (btn) btn.textContent = 'Toggle Clusters';
-        isClusterMode = true;
+        mapState.isClusterMode = false;
+      } else {
+        console.log('Enabling clusters'); // Debug log
+        // Remove individual markers, show clusters
+        mapState.allMarkers.forEach(marker => {
+          mapState.map.removeLayer(marker);
+        });
+        mapState.map.addLayer(mapState.markerClusterGroup);
+        if (btn) btn.textContent = 'Toggle Clusters';
+        mapState.isClusterMode = true;
       }
+      
+      // Force map refresh
+      setTimeout(() => {
+        mapState.map.invalidateSize();
+      }, 100);
+    }
+
+    function setupEventListeners() {
+      // Add delay to ensure DOM elements are ready
+      setTimeout(() => {
+        // Add pin button
+        const addPinBtn = document.getElementById('add-pin-btn');
+        if (addPinBtn) {
+          addPinBtn.addEventListener('click', () => {
+            if (!mapState.isAddingPin) {
+              startAddingPin();
+            }
+          });
+        }
+
+        // Toggle clusters - remove any existing listeners first
+        const toggleBtn = document.getElementById('toggle-view-btn');
+        if (toggleBtn) {
+          // Remove existing event listeners
+          toggleBtn.replaceWith(toggleBtn.cloneNode(true));
+          const newToggleBtn = document.getElementById('toggle-view-btn');
+          newToggleBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Cluster toggle button clicked'); // Debug log
+            toggleClusters();
+          });
+        }
+
+        // Modal events
+        const cancelBtn = document.getElementById('cancel-pin-btn');
+        if (cancelBtn) {
+          cancelBtn.addEventListener('click', cancelAddingPin);
+        }
+
+        const form = document.getElementById('add-pin-form');
+        if (form) {
+          form.addEventListener('submit', handlePinSubmit);
+        }
+
+        // Close modal on outside click
+        const modal = document.getElementById('add-pin-modal');
+        if (modal) {
+          modal.addEventListener('click', (e) => {
+            if (e.target.id === 'add-pin-modal') {
+              cancelAddingPin();
+            }
+          });
+        }
+      }, 100)
+
+      // Map click for adding pins
+      mapState.map.on('click', handleMapClick);
     }
 
     function addCustomStyles() {
