@@ -13,12 +13,15 @@ const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const navLinks = [
-    // { name: 'New Arrivals', href: '/category/new-arrivals' },
-    // { name: 'Sale', href: '/category/sale' },
+    { name: 'T-Shirts', href: '/category/tees' },
+    { name: 'Hoodies', href: '/category/hoodies' },
+    { name: 'Pants', href: '/category/pants' },
+    { name: 'Accessories', href: '/category/accessories' },
+    { name: 'Community', href: '/community/map' },
   ]
 
   return (
-    <nav className="bg-black/95 backdrop-blur-sm sticky top-0 z-50 border-b border-gray-800">
+    <nav className="bg-black/95 backdrop-blur-sm sticky top-0 z-50 border-b border-red-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
                 <Link href="/collection/gods" className="flex items-center group">
@@ -48,9 +51,10 @@ const Navbar = () => {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium transition-colors"
+                  className="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium transition-all duration-300 relative group"
                 >
                   {link.name}
+                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-red-600 transition-all duration-300 group-hover:w-full"></span>
                 </Link>
               ))}
             </div>
@@ -93,10 +97,11 @@ const Navbar = () => {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className="text-gray-300 hover:text-white block px-3 py-2 text-base font-medium"
+                  className="text-gray-300 hover:text-white block px-3 py-2 text-base font-medium transition-all duration-300 relative group"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {link.name}
+                  <span className="absolute bottom-0 left-3 w-0 h-0.5 bg-red-600 transition-all duration-300 group-hover:w-6"></span>
                 </Link>
               ))}
             </div>

@@ -4,6 +4,10 @@ import { motion, PanInfo } from 'framer-motion'
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 import { getCollection, getCollectionProducts } from '../../lib/collectionService'
 import GodsCollectionHero from '../../components/heroes/GodsCollectionHero'
+import MiddleHero from '../../components/heroes/MiddleHero'
+import AllProducts from '../../components/products/AllProducts'
+import Subscribe from '../../components/ui/Subscribe'
+import PromoPopup from '../../components/ui/PromoPopup'
 
 export default function GodsCollectionPage() {
   const router = useRouter()
@@ -11,22 +15,27 @@ export default function GodsCollectionPage() {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
   const [currentColorIndex, setCurrentColorIndex] = useState(0)
+  const [showPromoPopup, setShowPromoPopup] = useState(false)
   const sacredVariantsRef = useRef(null)
 
   useEffect(() => {
     async function fetchData() {
       setLoading(true)
       try {
-        // Fetch all data at once
         const { collection: collectionData, products: productsData } = await getCollectionProducts('gods')
         
         setCollection(collectionData)
         setProducts(productsData)
         
         console.log('Collection loaded with variants:', collectionData?.variants?.length || 0)
+        
+        // Show promo popup after a short delay when collection loads
+        setTimeout(() => {
+          setShowPromoPopup(true)
+        }, 2000)
+        
       } catch (error) {
         console.error('Error fetching gods collection:', error)
-        // Fallback to default config if fetching fails
         setCollection({
           hero_config: {
             title: 'GODS DON\'T SLEEP',
@@ -37,6 +46,11 @@ export default function GodsCollectionPage() {
           },
           variants: []
         })
+        
+        // Still show popup even if collection fails to load
+        setTimeout(() => {
+          setShowPromoPopup(true)
+        }, 2000)
       } finally {
         setLoading(false)
       }
@@ -76,7 +90,7 @@ export default function GodsCollectionPage() {
   }
 
   const handleVariantSwipe = (event, info) => {
-    const threshold = 30 // Reduced from 50 to make it more sensitive
+    const threshold = 30
     if (info.offset.x > threshold) {
       prevColor()
     } else if (info.offset.x < -threshold) {
@@ -88,7 +102,7 @@ export default function GodsCollectionPage() {
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-black">
           <div className="text-center">
-            <div className="text-yellow-400 text-xl font-mono mb-4">Loading Gods Collection...</div>
+            <div className="text-red-400 text-xl font-mono mb-4">Loading Gods Collection...</div>
             <div className="text-gray-400 text-sm">Please wait while we load the sacred variants</div>
           </div>
         </div>
@@ -96,14 +110,14 @@ export default function GodsCollectionPage() {
   }
 
   return (
-    <div className="bg-gradient-to-br from-black via-gray-900 to-black min-h-screen">
-      {/* Hero Section */}
-      {/* <GodsCollectionHero 
+    <div className="bg-black min-h-screen">
+      {/* Top Hero Section */}
+      <GodsCollectionHero 
         heroConfig={collection?.hero_config} 
         onCtaClick={scrollToSacredVariants}
-      /> */}
+      />
       
-      {/* Mystical Color Casket Section */}
+      {/* Featured Sacred Variants Casket Section */}
       <section 
         ref={sacredVariantsRef}
         className="py-16 md:py-32 bg-black/90 relative overflow-hidden"
@@ -111,7 +125,24 @@ export default function GodsCollectionPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           {/* Section Title */}
-
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <div className="inline-block bg-red-600/20 border border-red-500/50 rounded-full px-6 py-2 mb-6">
+              <span className="text-red-400 font-mono text-sm uppercase tracking-wider">
+                Fresh Stash
+              </span>
+            </div>
+            {/* <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 font-mono">
+              Sacred Variants Collection
+            </h2>
+            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+              Explore our mystical color variations, each carrying its own sacred energy and power.
+            </p> */}
+          </motion.div>
 
           {/* 3D Color Casket Viewer */}
           <motion.div 
@@ -119,7 +150,7 @@ export default function GodsCollectionPage() {
             style={{ perspective: '2000px' }}
             drag="x"
             dragConstraints={{ left: 0, right: 0 }}
-            dragElastic={0.05} // Reduced from 0.1 for snappier feel
+            dragElastic={0.05}
             dragTransition={{ bounceStiffness: 600, bounceDamping: 20 }}
             onDragEnd={handleVariantSwipe}
           >
@@ -171,11 +202,11 @@ export default function GodsCollectionPage() {
                     scale: finalScale
                   }}
                   transition={{ 
-                    duration: 0.4, // Reduced from 0.8 for faster transitions
+                    duration: 0.4,
                     delay: index * 0.05,
                     type: "spring",
-                    stiffness: 200, // Increased from 120 for snappier movement
-                    damping: 25 // Increased from 15 for less bounce
+                    stiffness: 200,
+                    damping: 25
                   }}
                   onClick={() => handleVariantClick(variation)}
                   whileHover={{ scale: isCenter ? (isMobile ? 1.15 : 1.35) : finalScale * 1.05 }}
@@ -354,20 +385,17 @@ export default function GodsCollectionPage() {
               </motion.button>
             ))}
           </motion.div>
-
-          {/* Swipe Instructions for Mobile */}
-          <motion.div
-            className="md:hidden text-center mt-6"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.5 }}
-          >
-            <p className="text-gray-400 text-sm font-mono">
-              Swipe left or right to browse variants
-            </p>
-          </motion.div>
         </div>
       </section>
+
+      {/* Middle Hero Section */}
+      <MiddleHero />
+
+      {/* All Products Section */}
+      <AllProducts products={products} />
+
+      {/* Subscribe Section */}
+      <Subscribe />
     </div>
   )
 }
