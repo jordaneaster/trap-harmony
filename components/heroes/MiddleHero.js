@@ -20,7 +20,7 @@ export default function MiddleHero() {
         <div className="text-center">
           
           {/* Badge */}
-          <motion.div
+          {/* <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -31,7 +31,7 @@ export default function MiddleHero() {
                 Tees
               </span>
             </div>
-          </motion.div>
+          </motion.div> */}
 
           {/* Main Content */}
           <motion.div
@@ -40,7 +40,7 @@ export default function MiddleHero() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="max-w-4xl mx-auto"
           >
-            <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-8 font-mono">
+            {/* <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-8 font-mono">
               Sacred Geometry
               <br />
               <span className="text-red-500">Meets Street</span>
@@ -49,7 +49,7 @@ export default function MiddleHero() {
             <p className="text-xl md:text-2xl text-gray-300 mb-12 leading-relaxed max-w-3xl mx-auto">
               Each design carries the ancient wisdom of sacred symbols, 
               reimagined for the modern warrior who never sleeps.
-            </p>
+            </p> */}
           </motion.div>
 
           {/* Featured Elements Grid */}
@@ -59,7 +59,7 @@ export default function MiddleHero() {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto"
           >
-            {[
+            {/* {[
               {
                 icon: "👁️",
                 title: "All-Seeing Design",
@@ -93,7 +93,7 @@ export default function MiddleHero() {
                   {item.description}
                 </p>
               </motion.div>
-            ))}
+            ))} */}
           </motion.div>
         </div>
       </div>

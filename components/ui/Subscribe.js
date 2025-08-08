@@ -36,7 +36,7 @@ export default function Subscribe() {
             transition={{ duration: 0.6 }}
             className="text-3xl md:text-4xl font-bold text-white mb-4 font-mono"
           >
-            Follow Trap&Harmony Newsletter for 10% off your first order
+            Follow Trap&Harmony Newsletter for exclusive drops!
           </motion.h2>
         </div>
 

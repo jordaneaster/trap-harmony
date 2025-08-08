@@ -5,35 +5,39 @@ import Link from 'next/link'
 export default function ProductCard({ product, className = '' }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   
-  const images = product.product_images || [{ image_url: product.image }]
-  const currentImage = images[currentImageIndex]?.image_url || product.image
+  const images = product.product_images || []
+  const currentImage = images[currentImageIndex]?.image_url || '/images/placeholder-product.jpg'
 
   const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % images.length)
+    if (images.length > 0) {
+      setCurrentImageIndex((prev) => (prev + 1) % images.length)
+    }
   }
 
   const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length)
+    if (images.length > 0) {
+      setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length)
+    }
   }
 
-  // Extract color from product ID if available
-  const productColor = product.id?.includes('black') ? 'black' : 
-                      product.id?.includes('white') ? 'white' :
-                      product.id?.includes('red') ? 'red' :
-                      product.id?.includes('yellow') ? 'yellow' : 'black'
+  // Format price from cents to dollars
+  const formatPrice = (price) => {
+    if (typeof price === 'number') {
+      return (price / 100).toFixed(2)
+    }
+    return price || '0.00'
+  }
 
-  // Determine product link based on available data
+  // Determine product link
   const getProductLink = () => {
     if (product.slug) {
-      // If product has variants, include the color parameter
-      const firstVariant = product.product_variants?.[0] || product.variants?.[0]
+      const firstVariant = product.product_variants?.[0]
       if (firstVariant?.color) {
         return `/product/${product.slug}?color=${firstVariant.color}`
       }
       return `/product/${product.slug}`
     }
-    // Fallback for hardcoded data
-    return `/product/gods-dont-sleep-tee?color=${productColor}`
+    return '#'
   }
 
   return (
@@ -42,7 +46,7 @@ export default function ProductCard({ product, className = '' }) {
         <div className="aspect-square relative overflow-hidden">
           <Image
             src={currentImage}
-            alt={product.name}
+            alt={product.name || 'Product image'}
             fill
             className="object-cover group-hover:scale-110 transition-transform duration-300"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -89,7 +93,7 @@ export default function ProductCard({ product, className = '' }) {
           </p>
           <div className="flex items-center justify-between">
             <span className="text-2xl font-bold text-accent-500">
-              ${product.price}
+              ${formatPrice(product.price)}
             </span>
             <button className="bg-accent-500 text-black px-4 py-2 rounded-lg font-semibold hover:bg-accent-600 transition-colors">
               Add to Cart
