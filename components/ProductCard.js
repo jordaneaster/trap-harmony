@@ -93,7 +93,7 @@ export default function ProductCard({ product, className = '' }) {
           </p>
           <div className="flex items-center justify-between">
             <span className="text-2xl font-bold text-accent-500">
-              ${formatPrice(product.price)}
+              ${(product.price)}
             </span>
             <button className="bg-accent-500 text-black px-4 py-2 rounded-lg font-semibold hover:bg-accent-600 transition-colors">
               Add to Cart

@@ -43,13 +43,13 @@ export default function ProductPage() {
             name: getColorDisplayName(variant.color),
             sku: variant.sku,
             size: variant.size,
-            price: variant.price || productData.price,
+            price: parseFloat(variant.price) || parseFloat(productData.price),
             stock_quantity: variant.stock_quantity,
             hex_color: getHexColor(variant.color),
             images: productData.product_images?.filter(img => 
-              img.variant_id === variant.id || 
-              (!img.variant_id && img.color_variant === variant.color)
-            ) || []
+              img.color_variant === variant.color || 
+              (!img.color_variant && !img.variant_id)
+            ) || productData.product_images || []
           })) || [],
           // If no variants, create a default one from main product
           ...((!productData.product_variants || productData.product_variants.length === 0) && {
@@ -58,12 +58,14 @@ export default function ProductPage() {
               color: 'default',
               name: productData.name,
               sku: productData.sku,
-              price: productData.price,
+              price: parseFloat(productData.price),
               stock_quantity: productData.stock_quantity,
               hex_color: '#000000',
               images: productData.product_images || []
             }]
-          })
+          }),
+          price: parseFloat(productData.price),
+          sale_price: productData.sale_price ? parseFloat(productData.sale_price) : null
         }
 
         console.log('Transformed product:', transformedProduct)
@@ -97,6 +99,7 @@ export default function ProductPage() {
     if (!color) return 'Default'
     
     const colorMap = {
+      'midnight black': 'Midnight Black',
       'black': 'Midnight Black',
       'white': 'Pure White',
       'red': 'Sacred Red',
@@ -116,6 +119,7 @@ export default function ProductPage() {
     if (!color) return '#000000'
     
     const hexMap = {
+      'midnight black': '#000000',
       'black': '#000000',
       'white': '#FFFFFF',
       'red': '#DC2626',
@@ -312,7 +316,19 @@ export default function ProductPage() {
             >
               <h3 className="text-xl font-semibold mb-4 font-mono">Size</h3>
               <div className="flex space-x-3">
-                {['XS', 'S', 'M', 'L', 'XL', 'XXL'].map((size) => (
+                {product.variants?.map(variant => variant.size).filter((size, index, self) => self.indexOf(size) === index).map((size) => (
+                  <button
+                    key={size}
+                    onClick={() => setSelectedSize(size)}
+                    className={`px-4 py-2 border font-mono transition-colors ${
+                      selectedSize === size
+                        ? 'border-white bg-white text-black'
+                        : 'border-gray-600 hover:border-white'
+                    }`}
+                  >
+                    {size}
+                  </button>
+                )) || ['XS', 'S', 'M', 'L', 'XL', 'XXL'].map((size) => (
                   <button
                     key={size}
                     onClick={() => setSelectedSize(size)}

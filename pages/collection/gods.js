@@ -98,9 +98,8 @@ export default function GodsCollectionPage() {
   if (loading) {
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-black">
-          <div className="text-center">
-            <div className="text-red-400 text-xl font-mono mb-4">Loading Gods Collection...</div>
-            {/* <div className="text-gray-400 text-sm">Please wait while we load the sacred variants</div> */}
+          <div className="text-center px-4">
+            <div className="text-red-400 text-lg md:text-xl font-poppins mb-4">Loading Gods Collection...</div>
           </div>
         </div>
     )
@@ -124,7 +123,9 @@ export default function GodsCollectionPage() {
       {/* <AllProducts products={products} /> */}
 
       {/* Subscribe Section */}
-      <Subscribe />
+      <div className="mt-8 md:mt-16">
+        <Subscribe />
+      </div>
     </div>
   )
 }
